@@ -13,13 +13,19 @@ var transporter = nodemailer.createTransport({
 
 module.exports = function(app) {
     // ------------POST Routes-------------------
+    app.post('/login',
+        passport.authenticate('login', 
+            {failureRedirect: '/login',
+            failureFlash: true}),
+        function(req, res) {            
+        });
     // create New User
-    app.post("/create/user/", function(req, res) {
-        models.User.create(req.body).then(
-            function(newUser) {
-                res.json(newUser);
-            });
-    });
+    app.post('/newUser',
+        passport.authenticate('signup', 
+            {failureRedirect: '/login',
+            failureFlash: true}),
+        function(req, res) {            
+        });
     // create new Pet
     app.post("/create/pet/", function(req, res) {
         models.Pet.create(req.body).then(

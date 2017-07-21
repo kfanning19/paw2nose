@@ -1,30 +1,72 @@
-// Include React as a dependency
-var React = require("react");
-// Including the Link component from React Router to navigate within our application without full page reloads
-// https://github.com/ReactTraining/react-router/blob/master/docs/API.md#link
-var Link = require("react-router").Link;
-var
-var PetProfile = React.createClass({
-	render:function(){
-		return (<div className="container">
-			        <h3 className="center"></h3>
-			        <div className="row">
-			            <div className="col s12">
-			                <ul className="tabs">
-			                    <li className="tab col s1"><Link className="active" to="#dashboard"><i className="material-icons">assessment</i></Link></li>
-			                    <li className="tab col s2"><Link to="/activity">Activity</Link></li>
-			                    <li className="tab col s2"><Link to="/contacts">Contacts</Link></li>
-			                    <li className="tab col s1"><Link to="/diet">Diet</Link></li>
-			                    <li className="tab col s2"><Link to="/health">Health</Link></li>
-			                    <li className="tab col s2"><Link to="/medications">Medications</Link></li>
-			                    <li className="tab col s2"><Link to="/settings">Settings</Link></li>
-			                </ul>
+import React from 'react'
+import { Switch, Route } from 'react-router-dom'
+import helpers from '../utils/helpers'
+import Dashboard from '../PetProfile/Dashboard'
+import Activity from '../PetProfile/Activity'
+import Contacts from '../PetProfile/Contacts'
+import Diet from '../PetProfile/Diet'
+import Health from '../PetProfile/Health'
+import Medications from '../PetProfile/Medications'
+import Settings from '../PetProfile/Settings'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+
+
+class PetProfile extends React.Component{
+	constructors(){
+		super();
+		this.state={
+			pet:{}
+		}
+	}
+	componentDidMount(){
+		let id=parseInt(props.match.params.petId);
+		helpers.getPet(id).then(function(petData){
+			console.log(petData)
+			this.setState({pet: petData})
+		}
+	}
+	render(){
+	return (<div className='container'>
+			        <h3 className='center'>{pet.name}</h3>
+			        <div className='row'>
+			            <div className='col s12'>
+			              <Tabs>
+						    <TabList>
+						      <Tab><i className='material-icons'>assessment</i></Tab>
+						      <Tab>Activity</Tab>
+						      <Tab>Contacts</Tab>
+						      <Tab>Diet</Tab>
+						      <Tab>Health</Tab>
+						      <Tab>Medications</Tab>
+						      <Tab>Settings</Tab>
+						    </TabList>
+
+						    <TabPanel>
+						      <Dashboard />
+						    </TabPanel>
+						    <TabPanel>
+						      <Activity />
+						    </TabPanel>
+						    <TabPanel>
+						      <Contacts />
+						    </TabPanel>
+						    <TabPanel>
+						      <Diet />
+						    </TabPanel>
+						    <TabPanel>
+						      <Health />
+						    </TabPanel>
+						    <TabPanel>
+						      <Medications />
+						    </TabPanel>
+						    <TabPanel>
+						      <Settings />
+						    </TabPanel>
+						  </Tabs>
 			            </div>
-		
 			        </div>
-			        	{this.props.children}
 			    </div>)
 	}
 
-});
-module.exports = PetProfile
+};
+export default PetProfile
