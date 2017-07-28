@@ -1,68 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
-    <title>PhiloPet</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">	
-	<!--     Include in CSS font-family: 'Raleway', sans-serif; -->
-	<!--     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Raleway:600" rel="stylesheet"> -->    
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+	<head>
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta charset="UTF-8">
+	    <title>PhiloPet</title>
+	    <!--Import Google Icon Font-->
+	    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	    <!-- Compiled and minified CSS -->
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+	    <!-- Linking to CSS -->
+	    <link rel="stylesheet" type="text/css" href="../assets/css/login.css">
+	</head>
 
-</head>
-
-<body>
-	<div class="container" id="greeting-page">
-		<div class="row header">
-			<div class="col s12 center-align" id="title">
-				<a id="greeting-link" class="smooth"></a>
-			    <h1 id="landing-header">PhiloPet</h1>
-			</div>
-		</div>
-		<div class="row" id="sign-in">
-			<div class="col s10 offset-s1 col m6 offset-m3">
-				<form action="/login" method="post">
-					<div class="row">
-						<h4 class="center-align">For the love of your pets.</h4>
-						<br><br><br>
-						<div class="input-field col s12">
-						     <input id="existing-email" name="username" type="text" class="validate" required>
-						    <label for="email">Email</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="input-field col s12">
-						    <input id="existing-password" name="password" type="password" class="validate" required>
-						    <label for="password">Password</label>
-						</div>
-					</div>
+	<body>
+		<div class="container" id="login-page">
+			<br>
+		<div class="container center-align" id="login-box">
+			<div class="row header">
+				<div class="col s12 center-align" id="login-title">
+				    <div id="landing-header">PhiloPet</div>
 				</div>
-				<div class="row">
-					<div class="input-field col s12 center-align">
-					    <button class="waves-effect waves-meeshteal btn" type="submit" id="user-login"> SUBMIT </button>
-					</div>
-				</form>
 			</div>
-			<div class="col s12 center-align">
-			    <span class="flow-text">
-			      		<a href="#">Forgot Password?</a> | <a href="#" id="sign-up-link">Create a New Account</a>
-				</span>
+			<div class="row" id="sign-in">
+				<div class="col s8 offset-s1 col m6 offset-m3">
+					<form action="/login" method="post">
+						<div class="row">
+							<div class="input-field col s12 center-align">
+							     <input id="existing-email" name="email" type="email" class="validate" required>
+							    <label for="email">Email</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s12 center-align">
+							    <input id="existing-password" name="password" type="password" class="validate" required>
+							    <label for="password">Password</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s12 center-align">
+							    <button class="waves-effect waves btn-large" type="submit" id="login_submit"> SUBMIT </button>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="col s12 center-align">
+				    <span class="flow-text">
+						<a href="/signup" id="sign-up-link">New? Click Here To Sign up!</a>
+					</span>
+				</div>
 			</div>
 		</div>
-	</div>
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
-	
-	<style>
-		body {
-			font-family: 'Raleway', sans-serif;
-		}
-	</style>
+	</body>
 
-</body>
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+	<!-- Compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+	
+	<!-- Custom JavaScript -->
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+	<script type="text/javascript" src="/assets/js/login.js"></script>
+
 </html>

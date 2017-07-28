@@ -1,0 +1,14 @@
+#message-board{
+	background-color: #fff;
+	overflow: auto;
+	height: 800px;
+	padding: 22px;
+	margin: 10px;
+}
+#weightChart{
+	height: 320px;
+	width: 100%;
+}
+#dashboard{
+	margin-top: 25px;
+}

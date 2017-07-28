@@ -1,6 +1,8 @@
-var models = require("../Models")
+var models = require("../Models");
 var randomstring = require("randomstring");
 var nodemailer = require("nodemailer");
+var bCrypt = require('bcrypt-nodejs');
+
 // create reusable transporter object using the default SMTP transport
 var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -11,136 +13,139 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-module.exports = function(app) {
+module.exports = function(app, passport) {
     // ------------POST Routes-------------------
-    app.post('/login',
-        passport.authenticate('login', 
-            {failureRedirect: '/login',
-            failureFlash: true}),
-        function(req, res) {            
+    // Login
+    app.post("/login",
+        passport.authenticate("local", { failureRedirect: '/' }),
+        function(req, res) {
+            res.redirect('/');
         });
+
     // create New User
-    app.post('/newUser',
-        passport.authenticate('signup', 
-            {failureRedirect: '/login',
-            failureFlash: true}),
-        function(req, res) {            
-        });
-    // create new Pet
-    app.post("/create/pet/", function(req, res) {
-        models.Pet.create(req.body).then(
-            (newPet) => {
-                res.json(newPet);
+    app.post("/signup", function(req, res) {
+        var formData = req.body;
+        models.User.findOne({ where: { email: formData.email } })
+            .then(function(user) {
+                if (user) {
+                    // A User with this email already exists
+                    // TODO: Display appropriate error message
+                    res.send("Email address already exists")
+                } else {
+                    formData.password = generateHash(formData.password);
+                    models.User.create(formData)
+                        .then(function(newUser) {
+                            res.redirect("/");
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            res.status(500);
+                        });
+                }
             });
+
+        function generateHash(password) {
+            return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
+        }
     });
+
+
+    // create new Pet
+    app.post("/create/pet", function(req, res) {
+        models.Pet.create(req.body)
+        .then((newPet) => {
+            models.User
+                .findOne({
+                    where: { id: req.user.id }
+                })
+                .then((newOwner) => {
+                    if (newOwner) {
+                        console.log(newOwner)
+                        return newOwner.addPet(newPet.id).then((data) => {
+                            res.redirect('/')
+                        })
+                    } else {
+                        res.send("Could not add to your account")
+                    };
+                })
+                .catch((error) => {
+                    console.log(error);
+                    res.status(500);
+                });
+        });
+    });
+
 
     // add activity
     app.post("/add/activity/", function(req, res) {
         models.Activity.create(req.body).then(
             (newActivity) => {
                 res.json(newActivity);
-            });
+            }).catch((error) => {
+            console.log(error);
+            res.status(500);
+        });
     });
     // add Diet
     app.post("/add/Diet/", function(req, res) {
         models.Diet.create(req.body).then(
             (newDiet) => {
                 res.json(newDiet);
-            });
-    });
-    // add Health
-    app.post("/add/Health/", function(req, res) {
-        models.Health.create(req.body).then(
-            (newHealth) => {
-                res.json(newHealth);
-            });
-    });
-    // add Illness
-    app.post("/add/Illness/", function(req, res) {
-        models.Illness.create(req.body).then(
-            (newIllness) => {
-                res.json(newIllness);
-            });
-    });
-    // add Medication
-    app.post("/add/Medication/", function(req, res) {
-        models.Medications.create(req.body).then(
-            (newMed) => {
-                res.json(newMed);
-            });
+            }).catch((error) => {
+            console.log(error);
+            res.status(500);
+        });
     });
 
     // add Message
     app.post("/add/Messages/", function(req, res) {
-        models.Messages.create(req.body).then(
+        models.Messages.create({
+            contents: req.body.contents,
+            PetId: req.body.PetId,
+            UserId: req.user.id
+        }).then(
             (newMess) => {
                 res.json(newMess);
-            });
+            }).catch((error) => {
+            console.log(error);
+            res.status(500);
+        });
     });
-    // add Professional
-    app.post("/add/Professional/", function(req, res) {
-        models.Professional.create(req.body).then(
+    // add Contacts
+    app.post("/add/Contacts/", function(req, res) {
+        models.Contacts.create(req.body).then(
             (newProf) => {
                 res.json(newProf);
-            });
+            }).catch((error) => {
+            console.log(error);
+            res.status(500);
+        });
     });
-    // add Weight
+        // add Weight
     app.post("/add/Weight/", function(req, res) {
         models.Weight.create(req.body).then(
-            (newlbs) => {
-                res.json(newlbs);
-            });
+            (data) => {
+                res.json(data);
+            }).catch((error) => {
+            console.log(error);
+            res.status(500);
+        });
     });
+
     // add new Owner
-    app.post("/add/owner/:email/:id/:name/:first/:last", function(req, res) {
+    app.post("/add/user/:id", function(req, res) {
         models.User.findOne({
-            where: { email: req.params.email }
+            where: { email: req.body.email }
         }).then((newOwner) => {
             if (newOwner) {
-                models.newOwner.addPet(req.params.id).then((data) => res.json(data))
+                console.log(newOwner)
+                return newOwner.addPet(req.params.id).then((data) => { res.json(data) })
             } else {
-                var random = randomstring.generate();
-
-                models.Caretaker.create({
-                    invite_string: random,
-                    email: req.params.email,
-                    petID: req.params.id,
-                    petName: req.params.name,
-                    inviter: req.params.first + " " + req.params.last
-                }).then((data) => {
-                    var mailOptions = {
-                        to: data.email,
-                        subject: data.PetName + " has been shared with you!",
-                        text: "Hi, " + data.Inviter + " has shared a pet with you on PhiloPet! To see this pet profile, go to philopet.com to create an account. Once completed, just click on the Add Pet button on your profile page. At the top of the form, fill in the spot that says 'Add by Code' with the following code: " + data.invite_string + ", then click submit and add it quickly! Note: the code is particular to this email address. It will not work with a different address.",
-                        html: "<body><p>Hi, " + data.Inviter + " has shared a pet with you on PhiloPet! To see this pet profile, go to philopet.com to create an account. Once completed, just click on the Add Pet button on your profile page. At the top of the form, fill in the spot that says 'Add by Code' with the following code: " + data.invite_string + ", then click submit and receive it quickly!</p></body>"
-                    };
-                    smtpTransport.sendMail(mailOptions, function(error, response) {
-                        if (error) {
-                            console.log(error);
-                            res.send("error");
-                        } else {
-                            console.log("Message sent to: " + data.email);
-                            var sendObject = { status: "sent" };
-                            console.log("sendObject: ", sendObject)
-                            res.send(sendObject);
-
-
-                        }
-                    });
-                });
+                res.send("No User Found") // TOOO: Return an error message indicating the user was not found
             };
-        })
-    });
-    // add new Owner by String
-    app.post("/api/owner/:ownerId/:email/pet/:petID", (req, res) => {
-        models.Caretaker.findOne({ where: { email: req.params.email, petID: req.params.petID } }).then((results) => {
-            if (results) {
-                models.User.findById({ where: { id: req.params.ownerId } }).then((foundUser) => {
-                    models.User.addPet(req.params.petId).then((data) => {
-                        res.json(data);
-                    })
-                })
-            }
-        })
+        }).catch((error) => {
+            console.log(error);
+            res.status(500);
+        });
     });
 }

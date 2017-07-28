@@ -1,47 +1,55 @@
-// Include Server Dependencies
+var models = require("./Models");
+// Dependencies
 var express = require("express");
 var bodyParser = require("body-parser");
-var logger = require("morgan");
+var methodOverride = require("method-override");
+var session = require("express-session");
+var flash = require('connect-flash');
+var morgan = require('morgan');
+var cookieParser = require('cookie-parser');
+var exphbs  = require('express-handlebars');
 
+// Requiring passport as we've configured it
+var passport = require("passport");
+require('./config/passport.js')(passport, models.User);
 
-// Require Schemas
-var models = require("./models");
+var port = process.env.PORT || 3000;
 
-// Create Instance of Express
 var app = express();
-var PORT = process.env.PORT || 3000; // Sets an initial port. We'll use this later in our listener
 
-// Run Morgan for Logging
-app.use(logger("dev"));
-app.use(bodyParser.json());
+// Serve static content for the app from the "public" directory in the application directory.
+app.use(express.static(process.cwd() + "/public"));
+app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser()); // read cookies (needed for auth)
+app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.text());
-app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
-app.use(express.static("./public"));
 
-// -------------------------------------------------
-// Seed files- remember to remove before deploying
+// Override with POST having ?_method=DELETE
+app.use(methodOverride("_method"));
+// We need to use sessions to keep track of our user's login status
+app.use(session({ secret: "animals are awesome", resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Handlebars
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
 var testing = require("./db.js");
 var testjoin = require("./db2.js");
 // Routes
-require("./routes/api-delete-routes.js");
-require("./routes/api-get-routes.js");
-require("./routes/api-post-routes.js");
-require("./routes/api-put-routes.js");
-require("./routes/html-routes.js");
-
-// Any non API GET routes will be directed to our React App and handled by React Router
-app.get("*", function(req, res) {
-  res.sendFile(__dirname + "/public/index.html");
-});
-
+require("./routes/api-delete-routes.js")(app);
+require("./routes/api-get-routes.js")(app);
+require("./routes/api-post-routes.js")(app, passport);
+require("./routes/api-put-routes.js")(app);
+require("./routes/html-routes.js")(app);
 
 //Connect to Sequelize and begin server listening
-models.sequelize.sync({force: true}).then(function(){
-  app.listen(port, function(){
-    console.log('Server successfully connected on PORT %s', port);
-    testing().then(testjoin);
-    // testjoin();
-  });
+models.sequelize.sync({ force: true }).then(function() {
+    app.listen(port, function() {
+        console.log('Server successfully connected on PORT %s', port);
+        testing().then(testjoin);
+        // testjoin();
+    });
 });

@@ -35,16 +35,18 @@ module.exports = function(sequelize, DataTypes) {
         },
         image: {
             type: DataTypes.STRING,
-            defaultValue: "photo.png"
+            defaultValue: "http://i.imgur.com/Dlqobja.jpg"
         }
     });
     User.associate = function(models) {
         User.belongsToMany(models.Pet, {
             through: {
-                model: models.UserPets, 
-                unique:false},
+                model: models.UserPets,
+                unique: false
+            },
             foreignKey: 'userId'
         });
+        User.hasMany(models.Messages, { onDelete: "cascade" });
     }
     return User;
 };

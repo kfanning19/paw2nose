@@ -1,14 +1,14 @@
 module.exports = function(sequelize, DataTypes) {
     var Weight = sequelize.define("Weight", {
         weight: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: false,
             validate: {
                 len: [1, 140]
             }
         },
         date: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             defaultValue: Date.Now
         }
     });

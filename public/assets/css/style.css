@@ -1,0 +1,101 @@
+/*Color Palette Shortcut
+
+light blue: #d0dfe4
+dark blue/green: #33575b
+dark brown: #2e0a05
+light tan: #ecc78d
+lighter tan: #f8eedc;
+even lighter tan: #fbf5ea;
+camel: #ad6a1d
+*/
+
+
+
+
+html, body {
+  font-family:'Raleway', sans-serif;
+	background-color: #d0dfe4;
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+#title {
+	color: #33575b;
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 150px;
+}
+
+#signin-box {
+
+	padding: 50px;
+	border-radius: 25px;
+	width: 1000px;
+	background-color: rgba(236,199,141, .7);
+}
+
+label {
+	color: #33575b;
+}
+
+.material-icons {
+  color: white;
+}
+
+.waves.waves-effect {
+  background-color: #33575b;
+}
+/*
+a {
+    color: #33575b;
+    cursor: pointer;
+}
+*/
+nav {
+    height: 65px;
+}
+
+h1 {
+  color: #ad6a1d !important;
+}
+
+.input-field label {
+  color: #33575b;
+}
+
+/* label focus color */
+.input-field input:focus + label {
+  color: #33575b !important;
+}
+
+/* label underline focus color */
+ .row .input-field input:focus {
+   border-bottom: 1px #33575b !important;
+   box-shadow: 0 1px 0 0 #33575b !important;
+ }
+
+
+img {
+	height: 300px;
+	width: 300px;
+}
+
+ /*About and FAQ*/
+
+div.collapsible-header {
+  background-color: #f8eedc;
+}
+
+div.collapsible-body {
+  background-color: #fbf5ea;
+}
+
+a button {
+    color: #33575b;
+    cursor: pointer;
+}
+
+
+/*Cards*/
+div.card.horizontal {
+  background-color: #fbf5ea;
+}
